@@ -7,11 +7,6 @@ import { UserContext } from "../context/UserContext";
 
 const Header = () => {
     const [user, setUser] = useContext(UserContext)
-
-    // const handleLogout = () => {
-    //     setUser(null)
-    //     localStorage.removeItem("user")
-    // }
     const { Header } = Layout;
 
     const handleLogout = () => {
@@ -28,32 +23,19 @@ const Header = () => {
                 <Menu.Item key="3"><Link to="/Game/List">Game</Link></Menu.Item>
 
                 {
-                    !user &&
+                    user === null &&
                     <Link to="/login">
                         <Menu.Item style={{ float: 'right' }} key="4" icon={<LoginOutlined />} > Login</Menu.Item>
                     </Link>
                 }
                 {
-                    user &&
+                    user !== null &&
                     <Link to="/login" onClick={handleLogout}>
                         <Menu.Item style={{ float: 'right' }} key="5" icon={<LogoutOutlined />} > Logout</Menu.Item>
                     </Link>
                 }
             </Menu>
         </Header>
-
-        // <header>
-        //     <img id="logo" alt="Logo" src={logo} width="200px" />
-        //     <nav>
-        //         <ul>
-        //             {/* <li><Link to="/">Home</Link></li>
-        //             <li><Link to="/about">About </Link> </li>
-        //             {user && <li><Link to="/movies">Movie List Editor </Link></li>}
-        //             {user === null && <li><Link to="/login">Login </Link></li>}
-        //             {user && <li><a style={{ cursor: "pointer" }} onClick={handleLogout}>Logout </a></li>} */}
-        //         </ul>
-        //     </nav>
-        // </header>
     )
 }
 

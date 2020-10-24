@@ -1,19 +1,16 @@
 import React, { useContext, useState } from "react"
-// import { UserContext } from "../context/UserContext"
 import { Form, Input, Button, Typography, Alert } from 'antd';
 import { LockOutlined, MailOutlined } from '@ant-design/icons';
 import Title from "antd/lib/typography/Title";
 import axios from "axios";
 import { UserContext } from "../../context/UserContext";
-import { Redirect } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 
 const Login = () => {
     const [user, setUser] = useContext(UserContext)
     const [error, setError] = useState(false)
 
     const onFinish = (values) => {
-        console.log('Received values of form: ', values.email);
-
         axios.post(`https://backendexample.sanbersy.com/api/user-login`, {
             email: values.email,
             password: values.password
@@ -24,8 +21,6 @@ const Login = () => {
                     password: values.password,
                     token: res.data.token
                 })
-                console.log(res.data.user)
-                console.log(res.data.token)
 
                 localStorage.setItem("user", JSON.stringify({
                     email: values.email,
@@ -34,7 +29,6 @@ const Login = () => {
                 }))
             })
             .catch(error => {
-                console.log(error.response.data)
                 if (error.response.data.error === 'invalid_credentials') {
                     setError(true)
                 }
@@ -43,7 +37,7 @@ const Login = () => {
 
     const redirect = () => {
         if (user !== null) {
-            return <Redirect to="/Movie/Data" />;
+            return <Redirect to="/" />;
         }
     }
 
@@ -93,13 +87,13 @@ const Login = () => {
                     <Button type="primary" htmlType="submit" className="form-button">
                         Log in
                     </Button>
-                    Or <a href="/register">Register now!</a>
+                    Or <Link to="/register">Register now!</Link>
                 </Form.Item>
 
                 {
                     error &&
                     <Alert
-                        message="User doesn't exist. Register first please !"
+                        message="User doesn't exist / Wrong password !"
                         type="error"
                         showIcon
                     />

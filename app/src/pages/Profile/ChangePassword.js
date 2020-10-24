@@ -1,12 +1,12 @@
-import React, { useState } from "react"
-// import { UserContext } from "../context/UserContext"
+import React, { useContext, useState } from "react"
 import { Form, Input, Button, Typography, Alert } from 'antd';
 import Title from "antd/lib/typography/Title";
 import axios from "axios";
+import { UserContext } from "../../context/UserContext";
 
 const ChangePassword = () => {
-    //   const [, setUser] = useContext(UserContext)
-    const [error, setError] = useState(false)
+    const [user,] = useContext(UserContext)
+    const [error, setError] = useState(null)
     const [form] = Form.useForm();
 
     const formItemLayout = {
@@ -32,32 +32,31 @@ const ChangePassword = () => {
     };
 
     const onFinish = (values) => {
-        console.log('Received values of form: ', values);
-        // setUser({username: input.username})
+        let current_password = values.current_password
+        let new_password = values.new_password
+        let new_confirm_password = values.new_confirm_password
 
-        axios.post(`https://backendexample.sanbersy.com/api/change-password`, {
-            token: '',
-            current_password: values.current_password,
-            new_password: values.new_password,
-            new_confirm_password: values.new_confirm_password
-        })
-            .then(res => {
-                console.log("Res : " + res)
+        axios.post(`https://backendexample.sanbersy.com/api/change-password`,
+            { current_password, new_password, new_confirm_password },
+            { headers: { "Authorization": `Bearer ${user.token}` } })
+            .then(() => {
+                setError(false)
+                form.setFieldsValue({
+                    current_password: "",
+                    new_password: "",
+                    new_confirm_password: ""
+                })
             })
             .catch(error => {
-                console.log(error.response.data)
                 if (error.response.data.error !== null) {
                     setError(true)
                 }
-                // } else if (error.request) {
-                //     console.log('Error Request : ', error.request);
-                // } else {
-                //     console.log('Error Message : ', error.message);
-                // }
-                // console.log('Error Config : ', error.config);
+                form.setFieldsValue({
+                    current_password: "",
+                    new_password: "",
+                    new_confirm_password: ""
+                })
             })
-
-        // localStorage.setItem("user", JSON.stringify({ username: values.username, password: values.password }))
     };
 
     return (
@@ -95,6 +94,10 @@ const ChangePassword = () => {
                             required: true,
                             message: 'Please input your new password!',
                         },
+                        {
+                            min: 6,
+                            message: 'The password must be at least 6 characters.'
+                        }
                     ]}
                     hasFeedback
                 >
@@ -133,15 +136,23 @@ const ChangePassword = () => {
 
                 <Form.Item {...tailFormItemLayout}>
                     {
-                        error &&
+                        error && error !== null &&
                         <Alert
-                            message="The email has already been taken."
+                            message="The Current Password is Wrong !"
                             type="error"
                             showIcon
                         />
                     }
+                    {
+                        !error && error !== null &&
+                        <Alert
+                            message="Password Change Successfully."
+                            type="success"
+                            showIcon
+                        />
+                    }
                 </Form.Item>
-                
+
             </Form>
         </>
     )

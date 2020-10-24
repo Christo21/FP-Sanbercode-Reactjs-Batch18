@@ -4,7 +4,7 @@ import { useHistory } from "react-router-dom";
 import { GamesContext } from "../../context/GamesContext";
 
 const GameList = () => {
-    const [games, ] = useContext(GamesContext)
+    const [games,] = useContext(GamesContext)
     const history = useHistory();
 
     const redirect = (id) => {
@@ -15,7 +15,7 @@ const GameList = () => {
     return (
         <>
             {
-                Array.isArray(games) && 
+                Array.isArray(games) &&
                 <List
                     grid={{
                         gutter: 16,
@@ -28,7 +28,7 @@ const GameList = () => {
                     }}
 
                     pagination={{
-                        pageSize: 8,
+                        pageSize: 10,
                         position: "bottom"
                     }}
 
@@ -42,7 +42,7 @@ const GameList = () => {
                                 style={{ height: 400 }}
                                 cover={
                                     <img
-                                        alt={item.id}
+                                        alt="We are Great!"
                                         src={item.image_url}
                                         className="card-img"
                                     />

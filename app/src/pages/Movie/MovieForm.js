@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react"
-import { Form, Input, Button, Typography, DatePicker } from 'antd';
+import { Form, Input, Button, Typography, DatePicker, InputNumber } from 'antd';
 import Title from "antd/lib/typography/Title";
 import axios from "axios";
 import moment from "moment";
@@ -38,6 +38,19 @@ const MovieForms = (props) => {
 
     useEffect(() => {
         let id = props.match.params.id
+        if(data && typeof id === 'undefined'){
+            form.setFieldsValue({
+                title: "",
+                description: "",
+                year: "",
+                duration: "",
+                genre: "",
+                rating: "",
+                image_url: "",
+                review: ""
+            })
+            setData(false)
+        }
         if (!data && typeof id !== 'undefined') {
             axios.get(`https://backendexample.sanbersy.com/api/data-movie/${id}`)
                 .then(res => {
@@ -48,7 +61,8 @@ const MovieForms = (props) => {
                         duration: res.data.duration,
                         genre: res.data.genre,
                         rating: res.data.rating,
-                        image_url: res.data.image_url
+                        image_url: res.data.image_url,
+                        review: res.data.review
                     })
                     setData(true)
                 })
@@ -65,28 +79,29 @@ const MovieForms = (props) => {
         let genre = values.genre
         let rating = values.rating
         let image_url = values.image_url
+        let review = values.review
 
         if (typeof id !== 'undefined') {
             axios.put(`https://backendexample.sanbersy.com/api/data-movie/${id}`,
-                { title, description, year, duration, genre, rating, image_url },
+                { title, description, year, duration, genre, rating, image_url, review },
                 { headers: { "Authorization": `Bearer ${user.token}` } })
                 .then(() => {
                     let index = movies.findIndex(el => el.id === parseInt(id))
                     let newMovies = [...movies]
                     newMovies[index] = {
-                        id, title, description, year, duration, genre, rating, image_url
+                        id, title, description, year, duration, genre, rating, image_url, review
                     }
                     setMovies(newMovies)
                     setSubmit(true)
                 })
         } else {
             axios.post(`https://backendexample.sanbersy.com/api/data-movie`,
-                { title, description, year, duration, genre, rating, image_url },
+                { title, description, year, duration, genre, rating, image_url, review },
                 { headers: { "Authorization": `Bearer ${user.token}` } })
                 .then((res) => {
                     setMovies([...movies, {
                         id: res.data.id,
-                        title, description, year, duration, genre, rating, image_url
+                        title, description, year, duration, genre, rating, image_url, review
                     }])
                     setSubmit(true)
                 })
@@ -162,12 +177,13 @@ const MovieForms = (props) => {
                     label="Duration"
                     rules={[
                         {
+                            type: "number",
                             required: true,
                             message: 'Please input the Duration !',
                         },
                     ]}
                 >
-                    <Input />
+                    <InputNumber />
                 </Form.Item>
 
                 <Form.Item
@@ -189,12 +205,13 @@ const MovieForms = (props) => {
                     label="Rating"
                     rules={[
                         {
+                            type: "number",
                             required: true,
                             message: 'Please input the Rating !',
                         },
                     ]}
                 >
-                    <Input />
+                    <InputNumber min={1} max={10} />
                 </Form.Item>
 
                 <Form.Item
@@ -204,6 +221,18 @@ const MovieForms = (props) => {
                         {
                             required: true,
                             message: 'Please input the Image URL !',
+                            whitespace: true,
+                        },
+                    ]}
+                >
+                    <Input.TextArea />
+                </Form.Item>
+
+                <Form.Item
+                    name="review"
+                    label="Review"
+                    rules={[
+                        {
                             whitespace: true,
                         },
                     ]}

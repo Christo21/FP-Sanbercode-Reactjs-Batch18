@@ -38,6 +38,17 @@ const GameForms = (props) => {
 
     useEffect(() => {
         let id = props.match.params.id
+        if (data && typeof id === 'undefined') {
+            form.setFieldsValue({
+                name: "",
+                genre: "",
+                platform: "",
+                release: "",
+                player: "",
+                image_url: ""
+            })
+            setData(false)
+        }
         if (!data && typeof id !== 'undefined') {
             axios.get(`https://backendexample.sanbersy.com/api/data-game/${id}`)
                 .then(res => {
@@ -224,7 +235,7 @@ const GameForms = (props) => {
                         },
                     ]}
                 >
-                    <DatePicker picker="year" inputReadOnly/>
+                    <DatePicker picker="year" inputReadOnly />
                 </Form.Item>
 
                 <Form.Item

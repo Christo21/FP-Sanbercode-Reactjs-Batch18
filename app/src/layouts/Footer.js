@@ -6,7 +6,7 @@ class Footer extends React.Component {
         const { Footer } = Layout;
         return (
             <Footer style={{ textAlign: "center" }}>
-                Copyright &copy; 2020 by Sanbercode
+                Copyright &copy; 2020 by Christoper Jonathan
             </Footer>
         )
     }

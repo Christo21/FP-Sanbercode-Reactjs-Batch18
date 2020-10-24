@@ -1,5 +1,5 @@
-import React from "react"
-import { Layout, Breadcrumb } from 'antd';
+import React, { useContext } from "react"
+import { Layout } from 'antd';
 import { Switch, Route } from "react-router-dom";
 import Login from "../pages/Profile/Login";
 import Register from "../pages/Profile/Register";
@@ -13,59 +13,37 @@ import GameList from "../pages/Game/GameList";
 import MovieForms from "../pages/Movie/MovieForm";
 import MovieList from "../pages/Movie/MovieList";
 import Home from "../pages/Home";
+import { UserContext } from "../context/UserContext";
 
 const Header = () => {
-    // const [user, setUser] = useContext(UserContext)
-
-    // const handleLogout = () => {
-    //     setUser(null)
-    //     localStorage.removeItem("user")
-    // }
+    const [user,] = useContext(UserContext)
     const { Content } = Layout;
-
+    
     return (
-        <Layout style={{ padding: '0 24px 24px' }}>
-            <Breadcrumb style={{ margin: '16px 0' }}>
-                <Breadcrumb.Item>Home</Breadcrumb.Item>
-                <Breadcrumb.Item>Movie</Breadcrumb.Item>
-                <Breadcrumb.Item>Detail</Breadcrumb.Item>
-            </Breadcrumb>
+        <Layout style={{ padding: '24px 24px' }}>
             <Content id="content" >
                 <Switch>
                     <Route exact path="/login" component={Login} />
-                    <Route exact path="/register" component={Register} />
-                    <Route exact path="/changePass" component={ChangePassword} />
+                    {user === null && <Route exact path="/register" component={Register} />}
+                    {user !== null && <Route exact path="/changePass" component={ChangePassword} />}
 
                     <Route exact path="/" component={Home} />
 
                     <Route exact path="/Game/List" component={GameList} />
-                    <Route exact path="/Game/Data" component={GameTable} />
+                    {user !== null && <Route exact path="/Game/Data" component={GameTable} />}
                     <Route path="/Game/Detail/:id" component={GameDetail} />
-                    <Route path="/Game/Form/:id" component={GameForms} />
-                    <Route exact path="/Game/Form" component={GameForms} />
+                    {user !== null && <Route path="/Game/Edit/:id" component={GameForms} />}
+                    {user !== null && <Route exact path="/Game/Create" component={GameForms} />}
 
                     <Route exact path="/Movie/List" component={MovieList} />
-                    <Route exact path="/Movie/Data" component={MovieTable} />
+                    {user !== null && <Route exact path="/Movie/Data" component={MovieTable} />}
                     <Route path="/Movie/Detail/:id" component={MovieDetail} />
-                    <Route path="/Movie/Form/:id" component={MovieForms} />
-                    <Route exact path="/Movie/Form" component={MovieForms} />
+                    {user !== null && <Route path="/Movie/Edit/:id" component={MovieForms} />}
+                    {user !== null && <Route exact path="/Movie/Create" component={MovieForms} />}
 
                 </Switch>
             </Content>
         </Layout>
-
-        // <header>
-        //     <img id="logo" alt="Logo" src={logo} width="200px" />
-        //     <nav>
-        //         <ul>
-        //             {/* <li><Link to="/">Home</Link></li>
-        //             <li><Link to="/about">About </Link> </li>
-        //             {user && <li><Link to="/movies">Movie List Editor </Link></li>}
-        //             {user === null && <li><Link to="/login">Login </Link></li>}
-        //             {user && <li><a style={{ cursor: "pointer" }} onClick={handleLogout}>Logout </a></li>} */}
-        //         </ul>
-        //     </nav>
-        // </header>
     )
 }
 

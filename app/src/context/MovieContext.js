@@ -19,7 +19,8 @@ export const MovieProvider = props => {
                             duration: el.duration,
                             genre: el.genre,
                             rating: el.rating,
-                            image_url: el.image_url
+                            image_url: el.image_url,
+                            review: el.review
                         }
                     }))
                 })

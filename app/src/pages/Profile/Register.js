@@ -1,12 +1,12 @@
 import React, { useState } from "react"
-// import { UserContext } from "../context/UserContext"
 import { Form, Input, Button, Typography, Alert } from 'antd';
 import { LockOutlined, MailOutlined, UserOutlined } from '@ant-design/icons';
 import Title from "antd/lib/typography/Title";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 const Register = () => {
-    const [error, setError] = useState(false)
+    const [error, setError] = useState(null)
     const [form] = Form.useForm();
 
     const onFinish = (values) => {
@@ -16,12 +16,23 @@ const Register = () => {
             password: values.password
         })
             .then(res => {
-                console.log("Res : " + res.data)
+                setError(false)
+                form.setFieldsValue({
+                    name: "",
+                    email: "",
+                    password: "",
+                    confirm: ""
+                })
             })
             .catch(error => {
-                console.log(error.response.data)
                 if (error.response.data.error !== null) {
                     setError(true)
+                    form.setFieldsValue({
+                        name: "",
+                        email: "",
+                        password: "",
+                        confirm: ""
+                    })
                 }
             })
     };
@@ -112,14 +123,22 @@ const Register = () => {
                     <Button type="primary" htmlType="submit" className="form-button">
                         Register
                     </Button>
-                    Or <a href="/login">Login now!</a>
+                    Or <Link to="/login">Login Now</Link>
                 </Form.Item>
 
                 {
-                    error &&
+                    error && error !== null &&
                     <Alert
                         message="The email has already been taken."
                         type="error"
+                        showIcon
+                    />
+                }
+                {
+                    !error && error !== null &&
+                    <Alert
+                        message="Registration Success, please Login."
+                        type="success"
                         showIcon
                     />
                 }

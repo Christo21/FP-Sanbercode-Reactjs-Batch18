@@ -4,7 +4,7 @@ import { useHistory } from "react-router-dom";
 import { MovieContext } from "../../context/MovieContext";
 
 const MovieList = () => {
-    const [movies, ] = useContext(MovieContext)
+    const [movies,] = useContext(MovieContext)
     const history = useHistory();
 
     const redirect = (id) => {
@@ -15,8 +15,8 @@ const MovieList = () => {
     return (
         <>
             {
-                 Array.isArray(movies) && 
-                 <List
+                Array.isArray(movies) &&
+                <List
                     grid={{
                         gutter: 16,
                         xs: 1,
@@ -28,7 +28,7 @@ const MovieList = () => {
                     }}
 
                     pagination={{
-                        pageSize: 8,
+                        pageSize: 10,
                         position: "bottom"
                     }}
 
@@ -42,14 +42,16 @@ const MovieList = () => {
                                 style={{ height: 400 }}
                                 cover={
                                     <img
-                                        alt={item.id}
+                                        alt="We are Great!"
                                         src={item.image_url}
                                         className="card-img"
                                     />
                                 }
                             >
                                 <List.Item.Meta
-                                    title={item.title}
+                                    title={
+                                        item.title.length > 20 ? item.title.substring(0, 20) + "..." : item.title
+                                    }
                                     description={item.year}
                                     avatar=
                                     {<Avatar shape="circle" size="large" style={{ backgroundColor: "#f39c12" }}>

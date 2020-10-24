@@ -8,7 +8,8 @@ import Search from "antd/lib/input/Search";
 
 const GameTable = () => {
     const [user,] = useContext(UserContext)
-    const [games, ] = useContext(GamesContext)
+    const [games, setGames] = useContext(GamesContext)
+
     const [data, setData] = useState(null)
     const { Option } = Select
     const [category, setCategory] = useState("name")
@@ -125,7 +126,7 @@ const GameTable = () => {
             key: 'release',
             filters: [...releaseList],
             filteredValue: filteredInfo.release || null,
-            onFilter: (value, record) => record.release.includes(value),
+            onFilter: (value, record) => record.release.toString().includes(value),
             sorter: (a, b) => a.release - b.release,
             sortOrder: sortedInfo.columnKey === 'release' && sortedInfo.order,
         },
@@ -134,7 +135,7 @@ const GameTable = () => {
             key: 'id',
             render: (row) => (
                 <Space size="middle">
-                    <Link to={`/Game/Form/${row.id}`} >Edit</Link>
+                    <Link to={`/Game/Edit/${row.id}`} >Edit</Link>
                     <Link onClick={() => { handleDelete(row.id) }}>Delete</Link>
                 </Space>
             ),
@@ -145,7 +146,7 @@ const GameTable = () => {
         setFilteredInfo({})
     }
 
-    const clearSorter = () =>{
+    const clearSorter = () => {
         setSortedInfo({})
     }
 
@@ -164,7 +165,6 @@ const GameTable = () => {
     )
 
     const handleChange = (pagination, filters, sorter) => {
-        console.log('Various parameters', pagination, filters, sorter);
         setFilteredInfo(filters)
         setSortedInfo(sorter)
     }
@@ -176,24 +176,25 @@ const GameTable = () => {
             .then(() => {
                 let newGame = games.filter(el => el.id !== id)
                 setData([...newGame])
+                setGames([...newGame])
             })
     }
 
     const onChangeSearch = (event) => {
         let newGame = [...games]
-        let value = event.target.value
+        let value = event.target.value.toString().toLowerCase()
 
         if (category === 'name') {
-            newGame = games.filter(el => el.name.toLowerCase().indexOf(value.toLowerCase()) !== -1)
+            newGame = games.filter(el => el.name.toString().toLowerCase().indexOf(value) !== -1)
         }
         if (category === 'genre') {
-            newGame = games.filter(el => el.genre.toLowerCase().indexOf(value.toLowerCase()) !== -1)
+            newGame = games.filter(el => el.genre.toString().toLowerCase().indexOf(value) !== -1)
         }
         if (category === 'platform') {
-            newGame = games.filter(el => el.platform.toLowerCase().indexOf(value.toLowerCase()) !== -1)
+            newGame = games.filter(el => el.platform.toString().toLowerCase().indexOf(value) !== -1)
         }
         if (category === 'release') {
-            newGame = games.filter(el => el.release.toLowerCase().indexOf(value.toLowerCase()) !== -1)
+            newGame = games.filter(el => el.release.toString().toLowerCase().indexOf(value) !== -1)
         }
 
         setData([...newGame])
@@ -208,7 +209,8 @@ const GameTable = () => {
                         <Button onClick={clearFilters}>Clear Filters</Button>
                         <Button onClick={clearSorter}>Clear Sorter</Button>
                         <Button onClick={clearAll}>Clear All</Button>
-                        <Search placeholder="Search Games" onChange={onChangeSearch} enterButton addonBefore={select} style={{width:500}}/>
+                        <Search placeholder="Search Games" onChange={onChangeSearch} enterButton addonBefore={select} style={{ width: 500 }} />
+                        <Link to={`/Game/Create`} ><Button type="primary">Add New Game</Button></Link>
                     </Space>
                     <Divider></Divider>
                     <Table columns={columns} dataSource={data} onChange={handleChange} />
