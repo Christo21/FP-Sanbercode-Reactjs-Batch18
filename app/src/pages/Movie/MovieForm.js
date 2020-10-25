@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react"
-import { Form, Input, Button, Typography, DatePicker, InputNumber } from 'antd';
+import { Form, Input, Button, Typography, DatePicker, InputNumber, Rate } from 'antd';
 import Title from "antd/lib/typography/Title";
 import axios from "axios";
 import moment from "moment";
@@ -38,7 +38,7 @@ const MovieForms = (props) => {
 
     useEffect(() => {
         let id = props.match.params.id
-        if(data && typeof id === 'undefined'){
+        if (data && typeof id === 'undefined') {
             form.setFieldsValue({
                 title: "",
                 description: "",
@@ -169,7 +169,7 @@ const MovieForms = (props) => {
                         },
                     ]}
                 >
-                    <DatePicker picker="year" inputReadOnly/>
+                    <DatePicker picker="year" inputReadOnly />
                 </Form.Item>
 
                 <Form.Item
@@ -177,10 +177,13 @@ const MovieForms = (props) => {
                     label="Duration"
                     rules={[
                         {
-                            type: "number",
                             required: true,
                             message: 'Please input the Duration !',
                         },
+                        {
+                            type: "number",
+                            message: 'Please input the Duration in Number only!',
+                        }
                     ]}
                 >
                     <InputNumber />
@@ -205,13 +208,22 @@ const MovieForms = (props) => {
                     label="Rating"
                     rules={[
                         {
-                            type: "number",
                             required: true,
                             message: 'Please input the Rating !',
                         },
+                        {
+                            type: "number",
+                            message: 'Please input the Rating in Number only!',
+                        }
                     ]}
                 >
-                    <InputNumber min={1} max={10} />
+                    <Rate
+                        defaultValue={1}
+                        count={10}
+                        character={({ index }) => {
+                            return index + 1;
+                        }}
+                    />
                 </Form.Item>
 
                 <Form.Item

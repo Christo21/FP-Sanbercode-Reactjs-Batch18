@@ -1,15 +1,16 @@
 import React, { useContext, useEffect, useState } from "react"
-import { Button, Divider, Select, Space, Table } from 'antd';
+import { Button, Divider, Select, Space, Table, Modal } from 'antd';
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { UserContext } from "../../context/UserContext";
 import { MovieContext } from "../../context/MovieContext";
 import Search from "antd/lib/input/Search";
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 const MovieTable = () => {
     const [user,] = useContext(UserContext)
     const [movies, setMovies] = useContext(MovieContext)
-    
+
     const [data, setData] = useState(null)
     const { Option } = Select
     const [category, setCategory] = useState("title")
@@ -21,6 +22,8 @@ const MovieTable = () => {
 
     const [filteredInfo, setFilteredInfo] = useState({})
     const [sortedInfo, setSortedInfo] = useState({})
+
+    const { confirm } = Modal;
 
     useEffect(() => {
         if (data == null) {
@@ -129,8 +132,9 @@ const MovieTable = () => {
             title: 'Review',
             dataIndex: 'review',
             key: 'review',
-            sorter: (a, b) => a.review - b.review,
+            sorter: (a, b) => a.review.localeCompare(b.review),
             sortOrder: sortedInfo.columnKey === 'review' && sortedInfo.order,
+            ellipsis: true,
         },
         {
             title: 'Action',
@@ -138,7 +142,7 @@ const MovieTable = () => {
             render: (row) => (
                 <Space size="middle">
                     <Link to={`/Movie/Edit/${row.id}`} >Edit</Link>
-                    <Link onClick={() => { handleDelete(row.id) }}>Delete</Link>
+                    <Link onClick={() => { showConfirm(row.id, row.title) }}>Delete</Link>
                 </Space>
             ),
         },
@@ -149,7 +153,7 @@ const MovieTable = () => {
         setFilteredInfo({})
     }
 
-    const clearSorter = () =>{
+    const clearSorter = () => {
         setSortedInfo({})
     }
 
@@ -207,6 +211,17 @@ const MovieTable = () => {
         setData([...newMovies])
     }
 
+    const showConfirm = (id, title) => {
+        confirm({
+            title: 'Do you want to delete these movie?',
+            icon: <ExclamationCircleOutlined />,
+            onOk() {
+                handleDelete(id)
+            },
+            content: title
+        });
+    }
+
     return (
         <>
             {
@@ -216,7 +231,7 @@ const MovieTable = () => {
                         <Button onClick={clearFilters}>Clear Filters</Button>
                         <Button onClick={clearSorter}>Clear Sorter</Button>
                         <Button onClick={clearAll}>Clear All</Button>
-                        <Search placeholder="Search Movies" onChange={onChangeSearch} enterButton addonBefore={select} style={{width:500}}/>
+                        <Search placeholder="Search Movies" onChange={onChangeSearch} enterButton addonBefore={select} style={{ width: 500 }} />
                         <Link to={`/Movie/Create`} ><Button type="primary">Add New Movie</Button></Link>
                     </Space>
                     <Divider></Divider>

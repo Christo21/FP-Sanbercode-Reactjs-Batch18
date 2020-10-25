@@ -1,10 +1,11 @@
 import React, { useContext, useEffect, useState } from "react"
-import { Button, Divider, Select, Space, Table } from 'antd';
+import { Button, Divider, Select, Space, Table, Modal } from 'antd';
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { UserContext } from "../../context/UserContext";
 import { GamesContext } from "../../context/GamesContext";
 import Search from "antd/lib/input/Search";
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 const GameTable = () => {
     const [user,] = useContext(UserContext)
@@ -20,6 +21,8 @@ const GameTable = () => {
 
     const [filteredInfo, setFilteredInfo] = useState({})
     const [sortedInfo, setSortedInfo] = useState({})
+
+    const { confirm } = Modal;
 
     useEffect(() => {
         if (data == null) {
@@ -136,7 +139,7 @@ const GameTable = () => {
             render: (row) => (
                 <Space size="middle">
                     <Link to={`/Game/Edit/${row.id}`} >Edit</Link>
-                    <Link onClick={() => { handleDelete(row.id) }}>Delete</Link>
+                    <Link onClick={() => { showConfirm(row.id, row.name) }}>Delete</Link>
                 </Space>
             ),
         },
@@ -198,6 +201,17 @@ const GameTable = () => {
         }
 
         setData([...newGame])
+    }
+
+    const showConfirm = (id, name) => {
+        confirm({
+            title: 'Do you want to delete these game?',
+            icon: <ExclamationCircleOutlined />,
+            onOk() {
+                handleDelete(id)
+            },
+            content: name
+        });
     }
 
     return (
